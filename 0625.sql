@@ -138,3 +138,38 @@ DECLARE @UpdatedValue VARCHAR(100) = (
 
 -- Output the updated value
 SELECT @UpdatedValue AS UpdatedValue;
+
+-- new :
+
+-- Create a sample table
+CREATE TABLE YourTable (
+    id INT,
+    OriginalValue VARCHAR(100)
+);
+
+-- Insert sample data
+INSERT INTO YourTable (id, OriginalValue)
+VALUES (1, 'a, b, c, d, e, f'),
+       (2, 'x, y, z'),
+       (3, '1, 2, 3, 4, 5, 6, 7');
+
+-- Update the table to replace odd-numbered commas with a colon
+WITH CTE AS (
+    SELECT id, OriginalValue,
+           (SELECT STRING_AGG(
+               CASE WHEN (ROW_NUMBER() OVER (ORDER BY (SELECT NULL))) % 2 = 1 THEN
+                   REPLACE(SplitValue, ',', ':')
+               ELSE
+                   SplitValue
+               END, ', ')
+            FROM STRING_SPLIT(OriginalValue, ',')
+           ) AS UpdatedValue
+    FROM YourTable
+)
+UPDATE YourTable
+SET OriginalValue = CTE.UpdatedValue
+FROM YourTable
+JOIN CTE ON YourTable.id = CTE.id;
+
+-- Select the updated data from the table
+SELECT * FROM YourTable;
