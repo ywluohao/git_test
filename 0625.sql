@@ -119,3 +119,22 @@ GROUP BY id, OriginalValue;
 
 -- Select the data from the new table
 SELECT * FROM SplitTable;
+
+-- 10:54
+
+-- Example value
+DECLARE @OriginalValue VARCHAR(100) = 'a, b, c, d, e, f';
+
+-- Replace odd-numbered commas with a colon
+DECLARE @UpdatedValue VARCHAR(100) = (
+    SELECT STRING_AGG(
+        CASE WHEN (ROW_NUMBER() OVER (ORDER BY (SELECT NULL))) % 2 = 1 THEN
+            REPLACE(SplitValue, ',', ':')
+        ELSE
+            SplitValue
+        END, ', ')
+    FROM STRING_SPLIT(@OriginalValue, ',')
+);
+
+-- Output the updated value
+SELECT @UpdatedValue AS UpdatedValue;
