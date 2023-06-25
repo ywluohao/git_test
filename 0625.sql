@@ -76,3 +76,46 @@ WHERE CommaIndex > 0;
 
 -- Select data from the split table
 SELECT * FROM SplitValues;
+
+
+-- method 3:
+
+-- Create the original table
+CREATE TABLE YourTable (
+    id INT,
+    OriginalValue VARCHAR(100)
+);
+
+-- Insert sample data into the original table
+INSERT INTO YourTable (id, OriginalValue)
+VALUES (1, 'a, b, c, d'), (2, '1, 2, 3, 4');
+
+-- Create the new table for storing the split values
+CREATE TABLE SplitTable (
+    id INT,
+    Column1 VARCHAR(100),
+    Column2 VARCHAR(100)
+);
+
+-- Split the values into two columns based on even occurrences and insert into the new table
+DECLARE @Delimiter CHAR(1) = ',';
+
+WITH CTE AS (
+    SELECT 
+        id,
+        OriginalValue,
+        LTRIM(RTRIM(SUBSTRING(',' + OriginalValue, (N - 1) * CHARINDEX(@Delimiter, ',' + OriginalValue, N * 2) + 1, CHARINDEX(@Delimiter, ',' + OriginalValue, N * 2) - (N - 1) * CHARINDEX(@Delimiter, ',' + OriginalValue, N * 2) - 1))) AS SplitValue,
+        ROW_NUMBER() OVER (PARTITION BY id ORDER BY N) AS RowNumber
+    FROM YourTable
+    CROSS JOIN (VALUES (1), (2)) AS Numbers(N)
+)
+INSERT INTO SplitTable (id, Column1, Column2)
+SELECT 
+    id,
+    MAX(CASE WHEN RowNumber = 1 THEN SplitValue END) AS Column1,
+    MAX(CASE WHEN RowNumber = 2 THEN SplitValue END) AS Column2
+FROM CTE
+GROUP BY id, OriginalValue;
+
+-- Select the data from the new table
+SELECT * FROM SplitTable;
