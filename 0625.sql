@@ -314,3 +314,28 @@ FROM CTE
 
 -- Check the SplitNames table to verify the results
 SELECT * FROM SplitNames
+
+
+
+-- ther fial
+-- Create a new table to store the split names
+CREATE TABLE SplitNames (
+    ID INT,
+    SubID INT,
+    NamePart VARCHAR(50)
+)
+
+-- Insert the data from your original table into the SplitNames table
+;WITH CTE AS (
+    SELECT ID,
+           value AS NamePart,
+           ROW_NUMBER() OVER (PARTITION BY ID ORDER BY (SELECT NULL)) AS Enumerator
+    FROM YourOriginalTable
+    CROSS APPLY STRING_SPLIT(Name, ',')
+)
+INSERT INTO SplitNames (ID, SubID, NamePart)
+SELECT ID, Enumerator, NamePart
+FROM CTE
+
+-- Check the SplitNames table to verify the results
+SELECT * FROM SplitNames
