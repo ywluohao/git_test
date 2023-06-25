@@ -247,3 +247,28 @@ GROUP BY id, OriginalValue;
 
 -- Select the data from the new table
 SELECT * FROM NewTable;
+
+
+-- Create a new table to store the updated result
+SELECT id, OriginalValue,
+    REPLACE(
+        (
+            SELECT STRING_AGG(
+                CASE WHEN (position - 1) % 2 = 0 THEN
+                    REPLACE(SplitValue, ',', ':')
+                ELSE
+                    SplitValue
+                END, ', '
+                ) WITHIN GROUP (ORDER BY position)
+            FROM (
+                SELECT value AS SplitValue,
+                    ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS position
+                FROM STRING_SPLIT(OriginalValue, ',')
+            ) AS SplitData
+        ), ',', ':'
+    ) AS UpdatedValue
+INTO NewTable
+FROM YourTable;
+
+-- Select the data from the new table
+SELECT * FROM NewTable;
