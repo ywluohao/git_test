@@ -272,3 +272,45 @@ FROM YourTable;
 
 -- Select the data from the new table
 SELECT * FROM NewTable;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--last
+
+-- Create a new table to store the split names
+CREATE TABLE SplitNames (
+    ID INT,
+    FirstName VARCHAR(50),
+    LastName VARCHAR(50)
+)
+
+-- Insert the data from your original table into the SplitNames table
+;WITH CTE AS (
+    SELECT ID, 
+           LTRIM(RTRIM(SUBSTRING(Name, (Number - 1) * 2 + 1, CHARINDEX(',', Name + ',', (Number - 1) * 2 + 1) - (Number - 1) * 2 - 1))) AS FullName
+    FROM YourOriginalTable
+    CROSS APPLY (
+        SELECT ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS Number
+        FROM STRING_SPLIT(Name, ',')
+    ) AS Numbers
+)
+INSERT INTO SplitNames (ID, FirstName, LastName)
+SELECT ID,
+       LTRIM(RTRIM(SUBSTRING(FullName, CHARINDEX(' ', FullName) + 1, LEN(FullName) - CHARINDEX(' ', FullName)))) AS FirstName,
+       LTRIM(RTRIM(SUBSTRING(FullName, 1, CHARINDEX(' ', FullName) - 1))) AS LastName
+FROM CTE
+
+-- Check the SplitNames table to verify the results
+SELECT * FROM SplitNames
