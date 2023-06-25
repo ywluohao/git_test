@@ -197,3 +197,28 @@ GROUP BY id, OriginalValue;
 
 -- Select the data from the new table
 SELECT * FROM NewTable;
+
+
+
+-- 11
+
+-- Create a new table to store the updated result
+SELECT id, OriginalValue,
+    STRING_AGG(
+        CASE WHEN (position - 1) % 2 = 0 THEN
+            REPLACE(SplitValue, ',', ':')
+        ELSE
+            SplitValue
+        END, ', '
+    ) AS UpdatedValue
+INTO NewTable
+FROM (
+    SELECT id, OriginalValue, value AS SplitValue,
+           ROW_NUMBER() OVER (PARTITION BY id ORDER BY (SELECT NULL)) AS position
+    FROM YourTable
+    CROSS APPLY STRING_SPLIT(OriginalValue, ',')
+) AS SplitData
+GROUP BY id, OriginalValue;
+
+-- Select the data from the new table
+SELECT * FROM NewTable;
