@@ -1,0 +1,7 @@
+SELECT 
+    OBJECT_NAME(object_id) AS TableName, 
+    SUM(used_page_count * 8) AS TotalSpaceKB
+FROM sys.dm_db_partition_stats
+WHERE SCHEMA_NAME(schema_id) = 'YourSchemaName'
+GROUP BY object_id
+ORDER BY TotalSpaceKB DESC;
