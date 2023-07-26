@@ -1,5 +1,12 @@
 # git_test
 
-hi
+In a professional email, you can rephrase it as follows:
 
-"Congratulations on your remarkable 25-year milestone! Your dedication and impact on our company are truly admirable. Although our paths may not cross often, your reputation as a kind-hearted person precedes you. Thank you for your valuable contributions and for creating a positive work environment. Here's to celebrating your achievements and wishing you continued success in the years to come. Cheers!"
+"Dear [Recipient's Name],
+
+I hope this email finds you well. I am reaching out regarding [your query or topic]. While I believe you might be the appropriate contact, I wanted to kindly inquire if you could confirm or direct me to the right person to address this matter, if you are not the appropriate point of contact.
+
+Thank you for your assistance.
+
+Best regards,
+[Your Name]"
