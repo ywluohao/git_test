@@ -1,0 +1,13 @@
+Yes, in Django, you can index a column that is not unique. Indexing a column helps to speed up query performance, even if the values in the indexed column are not unique. In fact, it's quite common to index non-unique columns, especially when those columns are frequently used in filtering or searching operations.
+
+For example, let's say you have a model representing user activity, and you want to index the `username` column:
+
+```python
+class UserActivity(models.Model):
+    username = models.CharField(max_length=255, db_index=True)
+    # other fields...
+```
+
+In this case, the `db_index=True` option on the `username` field adds an index to the column, making queries that filter based on `username` more efficient. This is beneficial when you have multiple records for each username.
+
+Remember that indexing comes with some trade-offs. While it speeds up read operations, it can slightly slow down write operations, and it increases storage requirements. Therefore, it's essential to carefully consider the columns you index based on your application's specific needs and query patterns.
