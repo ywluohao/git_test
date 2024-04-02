@@ -1,0 +1,14 @@
+IncludeRow = 
+IF (
+    SELECTEDVALUE('PredefinedChoices'[Choice]) = "Everything",
+    TRUE(),
+    IF (
+        SELECTEDVALUE('PredefinedChoices'[Choice]) = "Without Batch",
+        IF (
+            CONTAINSSTRING([InvoiceName], "batch"),
+            FALSE(),
+            TRUE()
+        ),
+        FALSE()
+    )
+)
