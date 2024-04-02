@@ -12,3 +12,18 @@ IF (
         FALSE()
     )
 )
+
+
+Filtered Option = 
+VAR SelectedChoice = SELECTEDVALUE('Predefined Choices'[Predefined Choice])
+
+RETURN
+    SWITCH (
+        SelectedChoice,
+        "All", CALCULATE(SUM('Table 1'[Value])),  // If "All" is selected, show all values
+        "Choose None", BLANK(),                    // If "Choose None" is selected, show blank
+        "a, b", CALCULATE(SUM('Table 1'[Value]), ('Table 1'[Option] = "a" || 'Table 1'[Option] = "b")),
+        "a, c", CALCULATE(SUM('Table 1'[Value]), ('Table 1'[Option] = "a" || 'Table 1'[Option] = "c")),
+        "b, c", CALCULATE(SUM('Table 1'[Value]), ('Table 1'[Option] = "b" || 'Table 1'[Option] = "c")),
+        BLANK()                                    // Default case
+    )
