@@ -1,35 +1,65 @@
+Understood. If the path you want to access is `C:\current`, you can adjust the script accordingly. Here's the modified version:
+
+```powershell
 # List of remote computer names
 $computers = "computer1", "computer2", "computer3"
 
+# Specify the full path
+$fullPath = "C:\current"
+
+# Initialize an empty array to store the results
+$results = @()
+
 # Loop through each remote computer
 foreach ($computer in $computers) {
-    Write-Host "Retrieving local user and group information from $computer..."
+    Write-Host "Retrieving local user and group information from $fullPath on $computer..."
     try {
         # Use PowerShell remoting to run commands on remote computers
-        Invoke-Command -ComputerName $computer -ScriptBlock {
-            # Get all local users
-            $localUsers = Get-LocalUser
-
+        $pathResults = Invoke-Command -ComputerName $computer -ScriptBlock {
+            param($path)
+            
+            # Get all local users from the specified path
+            $localUsers = Get-ChildItem -Path $path -Directory | Get-LocalUser
+            
             # Output local users and their group memberships
             foreach ($user in $localUsers) {
-                Write-Host "User: $($user.Name)"
-                Write-Host "Groups:"
+                $userResult = [PSCustomObject]@{
+                    "Computer" = $env:COMPUTERNAME
+                    "User" = $user.Name
+                    "Groups" = @()
+                }
 
                 # Get groups for each user
                 $groups = Get-LocalUser $user.Name | Get-LocalGroup
                 foreach ($group in $groups) {
-                    Write-Host "- $($group.Name)"
+                    $groupResult = [PSCustomObject]@{
+                        "Group" = $group.Name
+                        "Members" = @()
+                    }
 
                     # Get members of each group
                     $members = Get-LocalGroupMember $group.Name | Where-Object { $_.PrincipalSource -eq 'Local' }
                     foreach ($member in $members) {
-                        Write-Host "  - $($member.FullName)"
+                        $groupResult.Members += $member.FullName
                     }
+
+                    $userResult.Groups += $groupResult
                 }
-                Write-Host ""
+
+                $userResult
             }
-        }
+        } -ArgumentList $fullPath
+
+        # Add the results to the main results array
+        $results += $pathResults
     } catch {
-        Write-Host "Error occurred while retrieving information from $computer: $_"
+        Write-Host "Error occurred while retrieving information from $fullPath on $computer: $_"
     }
 }
+
+# Output results
+$results | Export-Csv -Path "LocalUserGroupInfo.csv" -NoTypeInformation
+Write-Host "Results exported to LocalUserGroupInfo.csv"
+```
+
+This script will gather local user and group information from the `C:\current` path on each remote computer and export the results to a CSV file named "LocalUserGroupInfo.csv". Adjustments can be made based on your specific requirements and environment.
