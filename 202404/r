@@ -1,0 +1,26 @@
+# List of remote computer names
+$computers = "computer1", "computer2", "computer3"
+
+# Loop through each remote computer
+foreach ($computer in $computers) {
+    Write-Host "Checking administrators on $computer..."
+    try {
+        # Get local administrators group members
+        $admins = Get-WmiObject Win32_GroupUser -ComputerName $computer -Filter "GroupComponent='Win32_Group.Domain='$computer',Name='Administrators'" | Select-Object PartComponent
+
+        # Extract usernames from the results
+        $adminUsers = $admins | ForEach-Object {
+            $_.PartComponent -replace '^Win32_UserAccount.Domain="([^"]+)",Name="([^"]+)"$', '$2'
+        }
+
+        # Output results
+        if ($adminUsers) {
+            Write-Host "Administrators on $computer:"
+            $adminUsers
+        } else {
+            Write-Host "No administrators found on $computer."
+        }
+    } catch {
+        Write-Host "Error occurred while checking administrators on $computer: $_"
+    }
+}
