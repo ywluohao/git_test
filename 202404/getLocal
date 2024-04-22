@@ -1,21 +1,35 @@
-# Get all local users
-$localUsers = Get-LocalUser
+# List of remote computer names
+$computers = "computer1", "computer2", "computer3"
 
-# Output local users and their group memberships
-foreach ($user in $localUsers) {
-    Write-Host "User: $($user.Name)"
-    Write-Host "Groups:"
+# Loop through each remote computer
+foreach ($computer in $computers) {
+    Write-Host "Retrieving local user and group information from $computer..."
+    try {
+        # Use PowerShell remoting to run commands on remote computers
+        Invoke-Command -ComputerName $computer -ScriptBlock {
+            # Get all local users
+            $localUsers = Get-LocalUser
 
-    # Get groups for each user
-    $groups = Get-LocalUser $user.Name | Get-LocalGroup
-    foreach ($group in $groups) {
-        Write-Host "- $($group.Name)"
+            # Output local users and their group memberships
+            foreach ($user in $localUsers) {
+                Write-Host "User: $($user.Name)"
+                Write-Host "Groups:"
 
-        # Get members of each group
-        $members = Get-LocalGroupMember $group.Name | Where-Object { $_.PrincipalSource -eq 'Local' }
-        foreach ($member in $members) {
-            Write-Host "  - $($member.FullName)"
+                # Get groups for each user
+                $groups = Get-LocalUser $user.Name | Get-LocalGroup
+                foreach ($group in $groups) {
+                    Write-Host "- $($group.Name)"
+
+                    # Get members of each group
+                    $members = Get-LocalGroupMember $group.Name | Where-Object { $_.PrincipalSource -eq 'Local' }
+                    foreach ($member in $members) {
+                        Write-Host "  - $($member.FullName)"
+                    }
+                }
+                Write-Host ""
+            }
         }
+    } catch {
+        Write-Host "Error occurred while retrieving information from $computer: $_"
     }
-    Write-Host ""
 }
