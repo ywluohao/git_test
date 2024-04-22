@@ -1,0 +1,21 @@
+# Get all local users
+$localUsers = Get-LocalUser
+
+# Output local users and their group memberships
+foreach ($user in $localUsers) {
+    Write-Host "User: $($user.Name)"
+    Write-Host "Groups:"
+
+    # Get groups for each user
+    $groups = Get-LocalUser $user.Name | Get-LocalGroup
+    foreach ($group in $groups) {
+        Write-Host "- $($group.Name)"
+
+        # Get members of each group
+        $members = Get-LocalGroupMember $group.Name | Where-Object { $_.PrincipalSource -eq 'Local' }
+        foreach ($member in $members) {
+            Write-Host "  - $($member.FullName)"
+        }
+    }
+    Write-Host ""
+}
