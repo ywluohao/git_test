@@ -1,0 +1,50 @@
+# List of group names
+$groupNames = "Group1", "Group2", "Group3", "Group4", "Group5", "Group6", "Group7"
+
+# Function to recursively retrieve group members
+function Get-NestedGroupMembers {
+    param ($groupName)
+
+    # Retrieve the group and its members recursively
+    $group = Get-ADGroup -Identity $groupName -Properties MemberOf, Member
+
+    # Initialize an empty array to store members
+    $members = @()
+
+    # Loop through direct members
+    foreach ($member in $group.Member) {
+        if ($member -like "CN=*") {
+            # If the member is a group, recursively retrieve its members
+            $nestedGroup = Get-ADGroup -Identity $member
+            $members += Get-NestedGroupMembers $nestedGroup.Name
+        } else {
+            # If the member is a user, add it to the list
+            $user = Get-ADUser -Identity $member -Properties DisplayName, EmailAddress
+            if ($user) {
+                $members += $user
+            }
+        }
+    }
+
+    return $members
+}
+
+# Initialize an empty array to store all group members
+$allMembers = @()
+
+# Loop through each group name
+foreach ($groupName in $groupNames) {
+    Write-Host "Retrieving members for group: $groupName..."
+    try {
+        # Retrieve all nested members of the group
+        $nestedMembers = Get-NestedGroupMembers $groupName
+
+        # Add members to the list
+        $allMembers += $nestedMembers
+    } catch {
+        Write-Host "Error occurred while retrieving members for group: $groupName - $_"
+    }
+}
+
+# Output the results
+$allMembers | Select-Object DisplayName, EmailAddress | Export-Csv -Path "AllGroupMembers.csv" -NoTypeInformation
