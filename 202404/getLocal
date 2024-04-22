@@ -1,8 +1,5 @@
-Understood. If the path you want to access is `C:\current`, you can adjust the script accordingly. Here's the modified version:
-
-```powershell
 # List of remote computer names
-$computers = "computer1", "computer2", "computer3"
+$computers = "ABC01", "ABC02", "ABC03"
 
 # Specify the full path
 $fullPath = "C:\current"
@@ -16,7 +13,7 @@ foreach ($computer in $computers) {
     try {
         # Use PowerShell remoting to run commands on remote computers
         $pathResults = Invoke-Command -ComputerName $computer -ScriptBlock {
-            param($path)
+            param($path, $computer)
             
             # Get all local users from the specified path
             $localUsers = Get-ChildItem -Path $path -Directory | Get-LocalUser
@@ -24,7 +21,7 @@ foreach ($computer in $computers) {
             # Output local users and their group memberships
             foreach ($user in $localUsers) {
                 $userResult = [PSCustomObject]@{
-                    "Computer" = $env:COMPUTERNAME
+                    "Computer" = $computer
                     "User" = $user.Name
                     "Groups" = @()
                 }
@@ -48,7 +45,7 @@ foreach ($computer in $computers) {
 
                 $userResult
             }
-        } -ArgumentList $fullPath
+        } -ArgumentList $fullPath, $computer
 
         # Add the results to the main results array
         $results += $pathResults
@@ -60,6 +57,3 @@ foreach ($computer in $computers) {
 # Output results
 $results | Export-Csv -Path "LocalUserGroupInfo.csv" -NoTypeInformation
 Write-Host "Results exported to LocalUserGroupInfo.csv"
-```
-
-This script will gather local user and group information from the `C:\current` path on each remote computer and export the results to a CSV file named "LocalUserGroupInfo.csv". Adjustments can be made based on your specific requirements and environment.
