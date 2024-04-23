@@ -1,0 +1,28 @@
+# Function to check nested groups
+function CheckNestedGroups {
+    param (
+        [string]$GroupName,
+        [string]$Domain
+    )
+    
+    $nestedGroups = Get-ADGroupMember -Identity $GroupName -Recursive | Where-Object {$_.ObjectClass -eq 'group'}
+    
+    Write-Host "Nested groups for $GroupName in $Domain domain:"
+    $nestedGroups | ForEach-Object {
+        Write-Host "- $($_.Name)"
+    }
+}
+
+# List of groups to check
+$groupsToCheck = @(
+    @{Name="Group1"; Domain="Domain1"},
+    @{Name="Group2"; Domain="Domain1"},
+    @{Name="Group3"; Domain="Domain2"}
+    # Add more groups as needed
+)
+
+# Iterate through each group and check nested groups
+foreach ($group in $groupsToCheck) {
+    CheckNestedGroups -GroupName $group.Name -Domain $group.Domain
+    Write-Host "-------------------------"
+}
