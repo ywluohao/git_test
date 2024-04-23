@@ -1,0 +1,1 @@
+Get-ADGroupMember -Identity "YourADGroupName" -Recursive | Where-Object {$_.ObjectClass -eq 'group'}
