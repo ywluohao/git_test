@@ -1,0 +1,1 @@
+Get-LocalUser | Select-Object *,@{Name="ComputerName";Expression={$env:COMPUTERNAME}} | Export-Csv -Path "C:\Path\To\Output\$($env:COMPUTERNAME)_Users.csv" -NoTypeInformation
