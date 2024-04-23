@@ -1,0 +1,20 @@
+# List of groups with their respective domains
+$groups = @(
+    @{Name="Group1"; Domain="Domain1"},
+    @{Name="Group2"; Domain="Domain1"},
+    @{Name="Group3"; Domain="Domain2"},
+    # Add more groups as needed
+)
+
+# Array to store all results
+$results = @()
+
+# Loop through each group
+foreach ($group in $groups) {
+    $groupResults = Get-ADGroupMember -Identity $group.Name -Recursive -Server $group.Domain | Select-Object ObjectClass, Name, @{Name='Mail'; Expression={ (Get-ADUser $_.Name -Properties Mail -Server $group.Domain).Mail }}
+
+    $results += $groupResults
+}
+
+# Export all results to a single CSV file
+$results | Export-Csv -Path "C:\Path\To\Save\Combined_Results.csv" -NoTypeInformation
