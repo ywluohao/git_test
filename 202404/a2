@@ -11,7 +11,7 @@ $results = @()
 
 # Loop through each group
 foreach ($group in $groups) {
-    $groupResults = Get-ADGroupMember -Identity $group.Name -Recursive -Server $group.Domain | Select-Object ObjectClass, Name, @{Name='Mail'; Expression={ (Get-ADUser $_.Name -Properties Mail -Server $group.Domain).Mail }}
+    $groupResults = Get-ADGroupMember -Identity $group.Name -Recursive -Server $group.Domain | Select-Object ObjectClass, Name, @{Name='Email'; Expression={ $_ | Get-ADUser -Properties mail -Server $group.Domain | Select-Object -ExpandProperty mail }}
 
     $results += $groupResults
 }
