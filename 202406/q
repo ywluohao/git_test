@@ -1,0 +1,20 @@
+from datetime import datetime, timedelta
+
+def get_previous_and_next_month(month):
+    # Convert input month string to a datetime object
+    date_obj = datetime.strptime(month, '%Y%m')
+    
+    # Calculate previous month
+    previous_month = (date_obj - timedelta(days=date_obj.day)).strftime('%Y%m')
+    
+    # Calculate next month
+    next_month = (date_obj + timedelta(days=32 - date_obj.day)).strftime('%Y%m')
+    
+    return previous_month, next_month
+
+# Example usage:
+month = '202306'
+previous_month, next_month = get_previous_and_next_month(month)
+
+print(f"Previous month: {previous_month}")
+print(f"Next month: {next_month}")
