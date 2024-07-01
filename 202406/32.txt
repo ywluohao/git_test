@@ -1,0 +1,207 @@
+# Django views.py file
+
+import os
+import threading
+import time
+import pandas as pd
+from django.http import JsonResponse, HttpResponse
+from django.views import View
+from django.shortcuts import render
+from .models import Task
+
+class TaskManager:
+    def start_task(self, task_id, *args):
+        def task_function(*args):
+            time.sleep(300)  # Simulate long-running task for 5 minutes
+            df = pd.DataFrame({
+                'Column1': [args[0], args[1]],
+                'Column2': [args[2], args[3]],
+            })
+            file_path = f'/path/to/excel/{task_id}.xlsx'
+            df.to_excel(file_path, index=False, engine='openpyxl')
+
+            # Update task status and file path in the database
+            task = Task.objects.get(task_id=task_id)
+            task.status = 'completed'
+            task.file_path = file_path
+            task.save()
+
+        Task.objects.create(task_id=task_id, status='processing')
+        thread = threading.Thread(target=task_function, args=args)
+        thread.start()
+
+    def get_task_status(self, task_id):
+        try:
+            task = Task.objects.get(task_id=task_id)
+            return {
+                'status': task.status,
+                'file_path': task.file_path
+            }
+        except Task.DoesNotExist:
+            return None
+
+task_manager = TaskManager()
+
+class StartExcelGenerationView(View):
+    def post(self, request, *args, **kwargs):
+        param1 = request.POST.get('param1')
+        param2 = request.POST.get('param2')
+        param3 = request.POST.get('param3')
+        param4 = request.POST.get('param4')
+        task_id = request.POST.get('task_id')  # Unique task ID from frontend
+
+        task_manager.start_task(task_id, param1, param2, param3, param4)
+        return JsonResponse({'task_id': task_id})
+
+class CheckExcelStatusView(View):
+    def get(self, request, *args, **kwargs):
+        task_id = request.GET.get('task_id')
+        task_status = task_manager.get_task_status(task_id)
+
+        if task_status:
+            if task_status['status'] == 'completed':
+                return JsonResponse({'status': 'success', 'file_path': task_status['file_path']})
+            else:
+                return JsonResponse({'status': 'processing'}, status=202)
+        else:
+            return JsonResponse({'status': 'not_found'}, status=404)
+
+class DownloadExcelView(View):
+    def get(self, request, *args, **kwargs):
+        file_path = request.GET.get('file_path')
+
+        if not os.path.exists(file_path):
+            return JsonResponse({'status': 'failure'}, status=404)
+
+        with open(file_path, 'rb') as file:
+            response = HttpResponse(file.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
+            return response
+
+# Vue.js component inside Django template (e.g., index.html)
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Excel Generation</title>
+    <script src="{% static 'vue/vue.min.js' %}"></script>
+</head>
+<body>
+    <div id="app">
+        <button @click="startExcelGeneration">Generate Excel</button>
+        <p v-if="statusMessage">{{ statusMessage }}</p>
+    </div>
+
+    <script>
+    new Vue({
+        el: '#app',
+        data: {
+            taskId: null,
+            statusMessage: '',
+            maxRetries: 60,  // 10 minutes with a 10-second interval
+            retryInterval: 10000,  // 10 seconds
+            retryCount: 0,
+        },
+        methods: {
+            async startExcelGeneration() {
+                // Generate a unique task ID
+                this.taskId = Date.now().toString();
+
+                try {
+                    const response = await fetch('/start-excel-generation/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            param1: 'value1',
+                            param2: 'value2',
+                            param3: 'value3',
+                            param4: 'value4',
+                            task_id: this.taskId,  // Assign the generated task ID
+                        }),
+                    });
+
+                    if (response.ok) {
+                        this.checkExcelStatus();
+                    } else {
+                        this.statusMessage = 'Failed to start Excel generation.';
+                    }
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                    this.statusMessage = 'Failed to start Excel generation.';
+                }
+            },
+
+            async checkExcelStatus() {
+                if (!this.taskId) return;
+
+                try {
+                    const response = await fetch(`/check-excel-status/?task_id=${this.taskId}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+
+                        if (data.status === 'success') {
+                            this.downloadExcel(data.file_path);
+                        } else if (data.status === 'processing') {
+                            this.handleRetry();
+                        } else {
+                            this.statusMessage = 'Failed to generate Excel file.';
+                        }
+                    } else {
+                        this.handleRetry();
+                    }
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                    this.handleRetry();
+                }
+            },
+
+            handleRetry() {
+                if (this.retryCount < this.maxRetries) {
+                    this.retryCount += 1;
+                    setTimeout(this.checkExcelStatus, this.retryInterval);
+                } else {
+                    this.statusMessage = 'Max retries reached. The Excel file is not available.';
+                }
+            },
+
+            async downloadExcel(filePath) {
+                try {
+                    const response = await fetch(`/download-excel/?file_path=${filePath}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    if (response.ok) {
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'data.xlsx';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        this.statusMessage = 'Excel file downloaded successfully.';
+                    } else {
+                        this.statusMessage = 'Failed to download Excel file.';
+                    }
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+                    this.statusMessage = 'Failed to download Excel file.';
+                }
+            },
+        },
+    });
+    </script>
+</body>
+</html>
