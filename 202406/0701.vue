@@ -14,13 +14,19 @@ export default {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          this.checkFileStatus(job_id); // Start checking file status
+          this.checkFileStatus(job_id, 0); // Start checking file status with initial attempt count 0
         })
         .catch(error => {
           console.error('Error starting file generation:', error);
         });
     },
-    checkFileStatus(job_id) {
+    checkFileStatus(job_id, attempt) {
+      const maxAttempts = 60; // Max attempts to check every 10 seconds results in 10 minutes (600 seconds)
+      if (attempt >= maxAttempts) {
+        console.error('Max attempts reached. File not ready.');
+        return;
+      }
+
       fetch(`/check-file-status/${job_id}/`)
         .then(response => {
           if (!response.ok) {
@@ -38,7 +44,7 @@ export default {
             link.click();
             document.body.removeChild(link);
           } else {
-            setTimeout(() => this.checkFileStatus(job_id), 10000); // Poll every 10 seconds
+            setTimeout(() => this.checkFileStatus(job_id, attempt + 1), 10000); // Poll every 10 seconds
           }
         })
         .catch(error => {
