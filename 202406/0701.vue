@@ -8,23 +8,20 @@
 export default {
   methods: {
     startFileGeneration() {
-      fetch(`/start-file-generation/?param1=${this.param1}&param2=${this.param2}&param3=${this.param3}&param4=${this.param4}`)
+      const job_id = Date.now(); // Generate job ID using current timestamp
+      fetch(`/start-file-generation/?param1=${this.param1}&param2=${this.param2}&param3=${this.param3}&param4=${this.param4}&job_id=${job_id}`)
         .then(response => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
           }
-          return response.json();
-        })
-        .then(data => {
-          const jobId = data.job_id;
-          this.checkFileStatus(jobId);
+          this.checkFileStatus(job_id); // Start checking file status
         })
         .catch(error => {
           console.error('Error starting file generation:', error);
         });
     },
-    checkFileStatus(jobId) {
-      fetch(`/check-file-status/${jobId}/`)
+    checkFileStatus(job_id) {
+      fetch(`/check-file-status/${job_id}/`)
         .then(response => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -36,12 +33,12 @@ export default {
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.setAttribute('download', `${jobId}.xlsx`);
+            link.setAttribute('download', `${job_id}.xlsx`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
           } else {
-            setTimeout(() => this.checkFileStatus(jobId), 10000);  // Poll every 10 seconds
+            setTimeout(() => this.checkFileStatus(job_id), 10000); // Poll every 10 seconds
           }
         })
         .catch(error => {
