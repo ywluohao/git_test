@@ -2,13 +2,16 @@ from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_GET
 import time
 import os
-import uuid  # For generating UUIDs
 
 # Simulated long process to generate Excel file
-def generate_excel(param1, param2, param3, param4):
+def generate_excel(param1, param2, param3, param4, job_id):
     # Simulating a long process to generate the Excel file
     time.sleep(30)  # Simulate 30 seconds of processing time
     # In real scenario, generate Excel file and save to server
+    # For demonstration, create an empty file with the job_id as its name
+    file_path = f'/path/to/generated/files/{job_id}.xlsx'
+    with open(file_path, 'w') as file:
+        file.write("Example content")  # Replace with actual Excel generation code
 
 # Endpoint to initiate file generation and return job_id
 @require_GET
@@ -17,12 +20,10 @@ def start_file_generation(request):
     param2 = request.GET.get('param2')
     param3 = request.GET.get('param3')
     param4 = request.GET.get('param4')
-
-    # Generate a unique job ID
-    job_id = str(uuid.uuid4())
+    job_id = request.GET.get('job_id')  # Receive job_id from frontend
 
     # Simulate initiating file generation and return job_id
-    generate_excel(param1, param2, param3, param4)
+    generate_excel(param1, param2, param3, param4, job_id)
 
     return JsonResponse({'job_id': job_id})
 
