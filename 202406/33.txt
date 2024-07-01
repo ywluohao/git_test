@@ -1,5 +1,97 @@
-<!-- Vue.js component inside Django template (e.g., index.html) -->
+# Combined script: main.py
 
+# Django models.py part
+from django.db import models
+
+class Task(models.Model):
+    task_id = models.CharField(max_length=100, unique=True)
+    status = models.CharField(max_length=50)
+    file_path = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"Task ID: {self.task_id}, Status: {self.status}"
+
+# Django views.py part
+import os
+import threading
+import time
+import pandas as pd
+from django.http import JsonResponse, HttpResponse
+from django.views import View
+from django.shortcuts import render
+from .models import Task
+
+class TaskManager:
+    def start_task(self, task_id, *args):
+        def task_function(*args):
+            time.sleep(300)  # Simulate long-running task for 5 minutes
+            df = pd.DataFrame({
+                'Column1': [args[0], args[1]],
+                'Column2': [args[2], args[3]],
+            })
+            file_path = f'/path/to/excel/{task_id}.xlsx'
+            df.to_excel(file_path, index=False, engine='openpyxl')
+
+            # Update task status and file path in the database
+            task = Task.objects.get(task_id=task_id)
+            task.status = 'completed'
+            task.file_path = file_path
+            task.save()
+
+        Task.objects.create(task_id=task_id, status='processing')
+        thread = threading.Thread(target=task_function, args=args)
+        thread.start()
+
+    def get_task_status(self, task_id):
+        try:
+            task = Task.objects.get(task_id=task_id)
+            return {
+                'status': task.status,
+                'file_path': task.file_path
+            }
+        except Task.DoesNotExist:
+            return None
+
+task_manager = TaskManager()
+
+class StartExcelGenerationView(View):
+    def post(self, request, *args, **kwargs):
+        param1 = request.POST.get('param1')
+        param2 = request.POST.get('param2')
+        param3 = request.POST.get('param3')
+        param4 = request.POST.get('param4')
+        task_id = request.POST.get('task_id')  # Unique task ID from frontend
+
+        task_manager.start_task(task_id, param1, param2, param3, param4)
+        return JsonResponse({'task_id': task_id})
+
+class CheckExcelStatusView(View):
+    def get(self, request, *args, **kwargs):
+        task_id = request.GET.get('task_id')
+        task_status = task_manager.get_task_status(task_id)
+
+        if task_status:
+            if task_status['status'] == 'completed':
+                return JsonResponse({'status': 'success', 'file_path': task_status['file_path']})
+            else:
+                return JsonResponse({'status': 'processing'}, status=202)
+        else:
+            return JsonResponse({'status': 'not_found'}, status=404)
+
+class DownloadExcelView(View):
+    def get(self, request, *args, **kwargs):
+        file_path = request.GET.get('file_path')
+
+        if not os.path.exists(file_path):
+            return JsonResponse({'status': 'failure'}, status=404)
+
+        with open(file_path, 'rb') as file:
+            response = HttpResponse(file.read(), content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = f'attachment; filename="{os.path.basename(file_path)}"'
+            return response
+
+# Vue.js part inside Django template (index.html)
+vue_code = """
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -125,3 +217,50 @@
     </script>
 </body>
 </html>
+"""
+
+# Save Vue.js code to a file for Django to serve
+with open('templates/index.html', 'w') as f:
+    f.write(vue_code)
+
+# Django views setup for URLs
+from django.urls import path
+
+urlpatterns = [
+    path('start-excel-generation/', StartExcelGenerationView.as_view(), name='start_excel_generation'),
+    path('check-excel-status/', CheckExcelStatusView.as_view(), name='check_excel_status'),
+    path('download-excel/', DownloadExcelView.as_view(), name='download_excel'),
+]
+
+# Django settings and URLconf setup
+import os
+from django.conf import settings
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DEBUG = True  # Set to False in production
+SECRET_KEY = 'your_secret_key_here'
+ALLOWED_HOSTS = ['*']  # Adjust as needed
+
+settings.configure(
+    DEBUG=DEBUG,
+    SECRET_KEY=SECRET_KEY,
+    ALLOWED_HOSTS=ALLOWED_HOSTS,
+    ROOT_URLCONF=__name__,
+    TEMPLATES=[
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        },
+    ],
+    INSTALLED_APPS=[
+        'django.contrib.staticfiles',
+    ],
+    STATIC_URL='/static/',
+)
+
+if __name__ == "__main__":
+    import django
+    from django.core.management import execute_from_command_line
+
+    django.setup()
+    execute_from_command_line(['manage.py', 'runserver'])
