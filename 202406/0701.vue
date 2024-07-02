@@ -21,7 +21,7 @@ export default {
         });
     },
     checkFileStatus(job_id, attempt) {
-      const maxAttempts = 60; // Max attempts to check every 10 seconds results in 10 minutes (600 seconds)
+      const maxAttempts = 30; // Max attempts to check every 10 seconds results in 5 minutes (300 seconds)
       if (attempt >= maxAttempts) {
         console.error('Max attempts reached. File not ready.');
         return;
