@@ -1,4 +1,4 @@
-from django.http import JsonResponse, HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.http import require_GET
 import threading
 import time
@@ -14,7 +14,7 @@ def generate_excel_async(param1, param2, param3, param4, job_id):
     with open(file_path, 'w') as file:
         file.write("Example content")  # Replace with actual Excel generation code
 
-# Endpoint to initiate file generation and return job_id
+# Endpoint to initiate file generation
 @require_GET
 def start_file_generation(request):
     param1 = request.GET.get('param1')
@@ -27,11 +27,14 @@ def start_file_generation(request):
     thread = threading.Thread(target=generate_excel_async, args=(param1, param2, param3, param4, job_id))
     thread.start()
 
-    return JsonResponse({'job_id': job_id})
+    return HttpResponse(status=202)  # Return 202 Accepted to indicate the process has started
 
 # Endpoint to check file generation status and return file for download if ready
 @require_GET
-def check_file_status(request, job_id):
+def check_file_status(request):
+    job_id = request.GET.get('job_id')
+    attempt = request.GET.get('attempt')
+    
     # Simulate checking file generation status
     # In real scenario, check if the file exists on the server
     file_path = f'/path/to/generated/files/{job_id}.xlsx'  # Replace with actual file path
@@ -42,4 +45,4 @@ def check_file_status(request, job_id):
             response['Content-Disposition'] = f'attachment; filename="{job_id}.xlsx"'
             return response
     else:
-        return JsonResponse({'status': 'pending'})
+        return JsonResponse({'status': 'pending', 'attempt': attempt})
