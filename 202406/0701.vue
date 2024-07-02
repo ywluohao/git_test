@@ -6,10 +6,25 @@
 
 <script>
 export default {
+  data() {
+    return {
+      param1: 'value1', // Replace with actual values or bindings
+      param2: 'value2', // Replace with actual values or bindings
+      param3: 'value3', // Replace with actual values or bindings
+      param4: 'value4', // Replace with actual values or bindings
+    };
+  },
   methods: {
     startFileGeneration() {
       const job_id = Date.now(); // Generate job ID using current timestamp
-      fetch(`/start-file-generation/?param1=${this.param1}&param2=${this.param2}&param3=${this.param3}&param4=${this.param4}&job_id=${job_id}`)
+
+      fetch(`/start-file-generation/?${new URLSearchParams({
+        param1: this.param1,
+        param2: this.param2,
+        param3: this.param3,
+        param4: this.param4,
+        job_id: job_id
+      }).toString()}`)
         .then(response => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -21,13 +36,16 @@ export default {
         });
     },
     checkFileStatus(job_id, attempt) {
-      const maxAttempts = 30; // Max attempts to check every 10 seconds results in 5 minutes (300 seconds)
+      const maxAttempts = 60; // Max attempts to check every 10 seconds results in 10 minutes (600 seconds)
       if (attempt >= maxAttempts) {
         console.error('Max attempts reached. File not ready.');
         return;
       }
 
-      fetch(`/check-file-status/${job_id}/`)
+      fetch(`/check-file-status/?${new URLSearchParams({
+        job_id: job_id,
+        attempt: attempt
+      }).toString()}`)
         .then(response => {
           if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
