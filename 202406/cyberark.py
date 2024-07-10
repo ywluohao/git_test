@@ -1,5 +1,6 @@
 WITH ExtractedValue AS (
     SELECT 
+        -- Extract the part after 'CN=' and before the comma
         SUBSTRING(
             YourColumnName, 
             CHARINDEX('=', YourColumnName) + 1, 
@@ -9,7 +10,9 @@ WITH ExtractedValue AS (
         YourTableName
 )
 SELECT 
-    LEFT(extracted_value, CHARINDEX('_', extracted_value) - 1) AS aaaa,
-    SUBSTRING(extracted_value, CHARINDEX('_', extracted_value) + 1, LEN(extracted_value)) AS bbb
+    -- Extract 'aaa' part
+    LEFT(extracted_value, LEN(extracted_value) - CHARINDEX('_', REVERSE(extracted_value))) AS aaa,
+    -- Extract 'bbb' part
+    RIGHT(extracted_value, CHARINDEX('_', REVERSE(extracted_value)) - 1) AS bbb
 FROM 
     ExtractedValue;
