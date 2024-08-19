@@ -1,0 +1,23 @@
+from dataclasses import dataclass
+
+@dataclass
+class ModuleConfig:
+    last_name: str
+    first_name: str
+    column1: str
+    column2: str
+
+    @property
+    def name(self) -> str:
+        return f"{self.first_name} {self.last_name}"
+
+# Creating an instance
+module = ModuleConfig(
+    last_name="Doe",
+    first_name="John",
+    column1="Value1",
+    column2="Value2"
+)
+
+# Accessing the computed property
+print(module.name)  # Outputs: John Doe
