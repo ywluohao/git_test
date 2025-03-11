@@ -1,8 +1,27 @@
-Here’s a compact version of Option 1 (pure JavaScript, no dependencies) tailored for your 35,000 × 27 dataset. It minimizes lines while keeping functionality:
+<template>
+  <button @click="downloadCSV">Download CSV</button>
+</template>
 
-
-Notes
-	•	Size: Handles your 35,000 × 27 (~14-50 MB CSV) on modern hardware.
-	•	Compactness: Single method, no batching or async for brevity (trade-off: UI might freeze for 5-15 seconds).
-	•	Risk: If it fails (e.g., memory crash), try papaparse instead.
-For your dataset, this should work unless your machine is very constrained. Test it and let me know!
+<script>
+export default {
+  data: () => ({
+    jsonData: Array(35000).fill().map((_, i) => ({
+      col1: `Name${i}`, col2: i, col3: `City${i}`, /* ... */ col27: `Data${i}`
+    }))
+  }),
+  methods: {
+    downloadCSV() {
+      const headers = Object.keys(this.jsonData[0]);
+      const csv = [
+        headers.join(','),
+        ...this.jsonData.map(r => headers.map(f => `"${(r[f] || '').toString().replace(/"/g, '""')}"`).join(','))
+      ].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'data_35000x27.csv';
+      link.click();
+    }
+  }
+}
+</script>
