@@ -1,0 +1,36 @@
+<template>
+  <div>
+    <b-form-input
+      type="text"
+      :value="formattedValue"
+      @input="onInput"
+      placeholder="Enter a number"
+    ></b-form-input>
+
+    <!-- Optional: display raw integer -->
+    <p>Raw value: {{ rawValue }}</p>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      rawValue: ''
+    };
+  },
+  computed: {
+    formattedValue() {
+      const num = parseInt(this.rawValue.replace(/,/g, ''));
+      if (isNaN(num)) return '';
+      return num.toLocaleString();
+    }
+  },
+  methods: {
+    onInput(val) {
+      // Remove non-digit characters
+      this.rawValue = val.replace(/[^\d]/g, '');
+    }
+  }
+};
+</script>
