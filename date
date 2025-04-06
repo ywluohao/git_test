@@ -1,0 +1,15 @@
+import pandas as pd
+from datetime import datetime
+
+# Sample DataFrame
+df = pd.DataFrame({'raw_date': ['500101', '690101', '300101']})
+
+# Parse to datetime using %y%m%d
+df['parsed_date'] = pd.to_datetime(df['raw_date'], format='%y%m%d')
+
+# Shift 100 years back if date is in the future
+now = pd.Timestamp.now()
+df['parsed_date'] = df['parsed_date'].where(df['parsed_date'] <= now,
+                                            df['parsed_date'] - pd.DateOffset(years=100))
+
+print(df)
