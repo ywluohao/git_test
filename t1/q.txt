@@ -1,0 +1,24 @@
+Here are 10 multiple-choice questions focused even more explicitly on coding techniques and scenarios specifically tailored to data analytics in an audit context, with an emphasis on Python and SQL:
+	1	Which Python code snippet correctly loads a CSV file named ‘transactions.csv’ into a DataFrame for audit analysis? a) import pandas as pd; df = pd.read_csv('transactions.csv') b) import csv; df = csv.load('transactions.csv') c) import pandas as pd; df = pd.open('transactions.csv') d) df = load_file('transactions.csv')
+	2	What SQL query would retrieve all records from a ‘Payments’ table where the amount exceeds the average payment amount? a) SELECT * FROM Payments WHERE Amount > (SELECT AVG(Amount) FROM Payments) b) SELECT * FROM Payments WHERE Amount > AVG(Amount) c) SELECT AVG(Amount) FROM Payments WHERE Amount > Amount d) SELECT * FROM Payments GROUP BY Amount HAVING Amount > AVG(Amount)
+	3	In Python, how would you write a line of code to replace all missing values in the ‘Vendor’ column with ‘Unknown’ in a DataFrame called ‘df’? a) df['Vendor'].fillna('Unknown', inplace=True) b) df['Vendor'] = 'Unknown' where df['Vendor'].isnull() c) df['Vendor'].replace(null, 'Unknown') d) df['Vendor'].fill('Unknown')
+	4	Which SQL statement identifies vendors with more than 5 transactions in a ‘Transactions’ table? a) SELECT Vendor, COUNT(*) FROM Transactions GROUP BY Vendor HAVING COUNT(*) > 5 b) SELECT Vendor FROM Transactions WHERE COUNT(*) > 5 c) SELECT Vendor, SUM(*) FROM Transactions GROUP BY Vendor > 5 d) SELECT Vendor FROM Transactions LIMIT 5
+	5	What does this Python code do in an audit context? df[df.duplicated(subset=['InvoiceID'], keep=False)] a) Removes all duplicate InvoiceIDs from the DataFrame b) Returns a DataFrame with all rows where InvoiceID is duplicated c) Counts the number of unique InvoiceIDs d) Sorts the DataFrame by InvoiceID
+	6	In SQL, how would you join a ‘Customers’ table and an ‘Orders’ table to analyze customer spending for an audit? a) SELECT Customers.CustomerID, SUM(Orders.Amount) FROM Customers INNER JOIN Orders ON Customers.CustomerID = Orders.CustomerID GROUP BY Customers.CustomerID b) SELECT * FROM Customers WHERE Orders.Amount > 0 c) SELECT Customers.CustomerID FROM Customers UNION Orders.CustomerID d) SELECT SUM(Orders.Amount) FROM Customers JOIN Orders
+	7	Which Python code correctly calculates the total amount of transactions per month from a ‘Date’ column in a DataFrame ‘df’? a) df.groupby(df['Date'].dt.to_period('M'))['Amount'].sum() b) df['Date'].sum('Amount') c) df.groupby('Date')['Amount'].total() d) df['Amount'].groupby('Date').sum()
+	8	What SQL query flags transactions occurring on weekends in a ‘Transactions’ table with a ‘TransDate’ column? a) SELECT * FROM Transactions WHERE DAYOFWEEK(TransDate) IN (1, 7) b) SELECT * FROM Transactions WHERE TransDate LIKE '%Saturday%' c) SELECT TransDate FROM Transactions WHERE WEEKDAY(TransDate) > 5 d) SELECT * FROM Transactions GROUP BY TransDate HAVING DAY(TransDate) = 'Weekend'
+	9	In Python, how would you write a condition to filter a DataFrame ‘df’ for transactions where the ‘Amount’ is negative? a) df[df['Amount'] < 0] b) df.filter('Amount' < 0) c) df.where(df['Amount'] < 0) d) df['Amount'].negative()
+	10	Which SQL query calculates the percentage of total revenue each client contributes in a ‘Sales’ table? a) SELECT ClientID, (SUM(Revenue) / (SELECT SUM(Revenue) FROM Sales) * 100) AS Percent FROM Sales GROUP BY ClientID b) SELECT ClientID, SUM(Revenue) / 100 FROM Sales GROUP BY ClientID c) SELECT ClientID, SUM(Revenue) AS Percent FROM Sales d) SELECT ClientID, Revenue / SUM(Revenue) FROM Sales GROUP BY ClientID
+
+Answers:
+	1	a
+	2	a
+	3	a
+	4	a
+	5	b
+	6	a
+	7	a
+	8	a
+	9	a
+	10	a
+These questions are designed to test practical coding skills relevant to audit data analytics. Let me know if you’d like further clarification or additional examples!
