@@ -20,3 +20,28 @@ Here are 10 common and insightful questions about Python that span various topic
 	10	How does Python support object-oriented programming (OOP)?
 	◦	Examines classes, objects, inheritance, polymorphism, and encapsulation in Python.
 Would you like me to elaborate on any of these or provide sample answers?
+
+Here are 10 Python-related questions specifically tailored for data analysis roles in an interview setting. These focus on libraries, techniques, and concepts commonly used in data analysis:
+	1	How do you load and explore a dataset using Pandas?
+	◦	Tests basic skills like reading CSV files (pd.read_csv), checking data (head(), info(), describe()), and handling missing values.
+	2	What’s the difference between NumPy arrays and Pandas DataFrames?
+	◦	Assesses understanding of NumPy’s numerical focus vs. Pandas’ tabular, labeled data structure.
+	3	How would you handle missing data in a dataset?
+	◦	Explores techniques like dropping rows (dropna()), filling with values (fillna()), or interpolation in Pandas.
+	4	Explain how to perform a group-by operation in Pandas and its use in data analysis.
+	◦	Covers groupby() for aggregating data (e.g., df.groupby('column').mean()), a key skill for summarizing insights.
+	5	How do you merge or join two DataFrames in Pandas?
+	◦	Tests knowledge of merge(), join(), or concat() and understanding of inner, outer, left, and right joins.
+	6	What’s the role of Matplotlib or Seaborn in data analysis, and how do you create a basic plot?
+	◦	Evaluates visualization skills, e.g., plt.plot() or sns.scatterplot(), and their importance in interpreting data.
+	7	How would you use Python to clean and preprocess data for analysis?
+	◦	Looks at steps like removing duplicates, converting data types, or normalizing values using Pandas and NumPy.
+	8	What are some common statistical functions in NumPy or SciPy, and how do you apply them?
+	◦	Examples include np.mean(), np.median(), or scipy.stats.ttest_ind() for hypothesis testing.
+	9	How do you pivot a DataFrame using Pandas, and why is it useful in data analysis?
+	◦	Focuses on pivot() or pivot_table() to reshape data for better insights, e.g., summarizing sales by region and product.
+	10	Can you explain how to use Python to perform a time series analysis?
+	◦	Tests familiarity with Pandas’ time-based indexing, resampling (resample()), and plotting trends over time.
+These questions range from foundational to intermediate/advanced, covering key libraries like Pandas, NumPy, Matplotlib, Seaborn, and SciPy. Let me know if you’d like detailed answers or code examples for any of them!
+
+
