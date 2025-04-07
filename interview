@@ -1,0 +1,22 @@
+Here are 10 common and insightful questions about Python that span various topics, suitable for beginners, intermediate learners, or interviewers:
+	1	What is Python, and what are some of its key features?
+	◦	This explores Python’s identity as a high-level, interpreted programming language and its features like readability, simplicity, and extensive libraries.
+	2	How does Python handle memory management?
+	◦	A question about Python’s use of automatic garbage collection, reference counting, and the role of the memory manager.
+	3	What are the differences between Python 2 and Python 3?
+	◦	Highlights key changes like print function syntax, integer division, and Unicode support that differentiate the two versions.
+	4	What are list comprehensions, and how do they work?
+	◦	A practical question about Python’s concise way to create lists, e.g., [x**2 for x in range(5)].
+	5	Explain the difference between == and is operators in Python.
+	◦	Tests understanding of value comparison (==) versus identity comparison (is).
+	6	What are decorators in Python, and how can you create one?
+	◦	Dives into a more advanced feature where functions modify other functions, often used in frameworks like Flask.
+	7	How do you handle exceptions in Python? Give an example.
+	◦	Covers try, except, else, and finally blocks for error management, a critical skill in robust coding.
+	8	What is the difference between a shallow copy and a deep copy?
+	◦	Explores how Python handles copying objects, especially nested ones, using the copy module.
+	9	What are Python’s built-in data structures, and when would you use each?
+	◦	Focuses on lists, tuples, dictionaries, and sets, with their use cases (e.g., mutable vs. immutable).
+	10	How does Python support object-oriented programming (OOP)?
+	◦	Examines classes, objects, inheritance, polymorphism, and encapsulation in Python.
+Would you like me to elaborate on any of these or provide sample answers?
