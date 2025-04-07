@@ -22,3 +22,29 @@ Answers:
 	9	a
 	10	a
 These questions are designed to test practical coding skills relevant to audit data analytics. Let me know if you’d like further clarification or additional examples!
+
+Here’s a multiple-choice question designed to test understanding of LEFT JOIN and INNER JOIN in SQL, specifically in the context of data analytics for an audit:
+
+Question: An auditor is analyzing two tables: ‘Invoices’ (containing all issued invoices) and ‘Payments’ (containing payment records). The ‘Invoices’ table has an ‘InvoiceID’ column, and the ‘Payments’ table has a matching ‘InvoiceID’ column. The auditor wants to compare two approaches: one to see all invoices and their payments (if any), and another to see only invoices that have been paid. Which SQL queries correctly achieve these goals?
+a)
+	•	All invoices with payments (if any): SELECT Invoices.InvoiceID, Payments.Amount FROM Invoices LEFT JOIN Payments ON Invoices.InvoiceID = Payments.InvoiceID
+	•	Only paid invoices: SELECT Invoices.InvoiceID, Payments.Amount FROM Invoices INNER JOIN Payments ON Invoices.InvoiceID = Payments.InvoiceID
+b)
+	•	All invoices with payments (if any): SELECT Invoices.InvoiceID, Payments.Amount FROM Invoices INNER JOIN Payments ON Invoices.InvoiceID = Payments.InvoiceID
+	•	Only paid invoices: SELECT Invoices.InvoiceID, Payments.Amount FROM Invoices LEFT JOIN Payments ON Invoices.InvoiceID = Payments.InvoiceID
+c)
+	•	All invoices with payments (if any): SELECT Invoices.InvoiceID, Payments.Amount FROM Payments LEFT JOIN Invoices ON Invoices.InvoiceID = Payments.InvoiceID
+	•	Only paid invoices: SELECT Invoices.InvoiceID, Payments.Amount FROM Invoices JOIN Payments ON Invoices.InvoiceID = Payments.InvoiceID
+d)
+	•	All invoices with payments (if any): SELECT Invoices.InvoiceID, Payments.Amount FROM Invoices LEFT JOIN Payments ON Invoices.InvoiceID = Payments.InvoiceID
+	•	Only paid invoices: SELECT Invoices.InvoiceID, Payments.Amount FROM Payments INNER JOIN Invoices ON Invoices.InvoiceID = Payments.InvoiceID
+
+Answer: a)
+	•	Explanation:
+	◦	A LEFT JOIN keeps all rows from the left table (‘Invoices’) and includes matching rows from the right table (‘Payments’), if they exist. This is perfect for seeing all invoices, paid or unpaid, with payment amounts (or NULL if unpaid).
+	◦	An INNER JOIN only returns rows where there is a match in both tables, so it will show only invoices that have corresponding payments, which aligns with identifying paid invoices.
+	◦	Option (a) correctly applies these joins to the auditor’s needs. The other options either swap the logic, misuse table order, or misapply join types.
+Let me know if you’d like more examples or a deeper breakdown!
+
+
+
