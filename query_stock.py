@@ -1,27 +1,9 @@
 #!/Users/haoluo/venv/stock/bin/python3
 import argparse
-
-# avoid the confusing warning message
-import logging
 import math
-import os
-import time
-import warnings
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
-
+from datetime import datetime, timedelta
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
-import pretty_errors
-import yagmail
 import yfinance as yf
-from emoji import emojize
-from tabulate import tabulate
-import humanize
-from tqdm import tqdm
-from pprint import pprint as pp
-import shutil
 
 
 def download_stock_price(ticker, absolute_date=False, a1="", a2="", r1=5, r2=3, full=False, format="series"):
@@ -70,25 +52,15 @@ def query_price(t):
     )
 
     data_30d_full["daily"] = (data_30d_full["adjclose"] / data_30d_full["adjclose"].shift(-1) - 1).apply(
-        lambda x: "{:+.2%}".format(x) if pd.notnull(x) else x
+        lambda x: FORMAT_NUMBER.format(x) if pd.notnull(x) else x
     )
     data_30d_full["cul"] = price / data_30d_full["adjclose"] - 1
     data_30d_full.loc[1:, "avg"] = data_30d_full.loc[1:, "cul"] / data_30d_full.index[1:]
-    data_30d_full["cul"] = data_30d_full["cul"].apply(lambda x: "{:+.2%}".format(x))
-    data_30d_full["avg"] = data_30d_full["avg"].apply(lambda x: "{:+.2%}".format(x))
+    data_30d_full["cul"] = data_30d_full["cul"].apply(lambda x: FORMAT_NUMBER.format(x))
+    data_30d_full["avg"] = data_30d_full["avg"].apply(lambda x: FORMAT_NUMBER.format(x))
 
     past_n_days = data_30d_full[["date"]].head(3)
     past_n_days["print"] = past_n_days["date"].dt.strftime("%a_%m%d") + f"_{price}"
-
-    def comment(d, c):
-        c = float(c.replace("%", ""))
-        if c > 0:
-            c = math.floor(c)
-            a = "up"
-        else:
-            c = -math.ceil(c)
-            a = "down"
-        return f"{d}-day {a} {c}%"
 
     for i in range(past_n_days.shape[0]):
         data_30d_full[past_n_days.iloc[i, 1]] = ""
@@ -99,7 +71,6 @@ def query_price(t):
     for i in range(past_n_days.shape[0]):
         for j in range(data_30d_full.shape[0] - 1):
             if j >= i:
-
                 data_30d_full.iloc[j, i + index_last + 1] = comment(j + 1 - i, data_30d_full.iloc[j + 1, index_cul])
 
     print(data_30d_full)
@@ -126,6 +97,20 @@ def query_price(t):
 
     for row in metrics.T.values.tolist():
         print("     ".join(row))
+
+
+FORMAT_NUMBER = "{:+.2%}"
+
+
+def comment(d, c):
+    c = float(c.replace("%", ""))
+    if c > 0:
+        c = math.floor(c)
+        a = "up"
+    else:
+        c = -math.ceil(c)
+        a = "down"
+    return f"{d}-day {a} {c}%"
 
 
 def price_indicator_with_ranges(current_price, local_min, local_max, global_min, global_max, local_close, width=30):
