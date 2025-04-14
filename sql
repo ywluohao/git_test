@@ -108,3 +108,84 @@ p.team = t.team
 WHERE
 p.score > t.avg_score;
 ```
+
+# Pandas Solutions for SQL Interview Questions
+
+We use the following DataFrame:
+
+```python
+import pandas as pd
+
+df = pd.DataFrame({
+"team": ["A", "A", "B", "A", "B"],
+"employee": ["Alice", "Bob", "Carol", "Dave", "Eve"],
+"score": [90, 80, 85, 95, 88]
+})
+```
+
+---
+
+## Q1 - Average score per team
+
+```python
+df.groupby("team")["score"].mean().reset_index(name="average_score")
+```
+
+**Result:**
+
+| team | average_score |
+|------|----------------|
+| A | 88.33 |
+| B | 86.50 |
+
+---
+
+## Q2 - Employee ranks within team (Dense Rank)
+
+```python
+df["rank_in_team"] = df.groupby("team")["score"].rank(method="dense", ascending=False)
+```
+
+**Result:**
+
+| team | employee | score | rank_in_team |
+|------|----------|-------|--------------|
+| A | Alice | 90 | 2.0 |
+| A | Bob | 80 | 3.0 |
+| B | Carol | 85 | 2.0 |
+| A | Dave | 95 | 1.0 |
+| B | Eve | 88 | 1.0 |
+
+---
+
+## Q3 - Top performer(s) in each team
+
+```python
+top_scores = df.groupby("team")["score"].transform("max")
+df[df["score"] == top_scores][["team", "employee", "score"]]
+```
+
+**Result:**
+
+| team | employee | score |
+|------|----------|-------|
+| A | Dave | 95 |
+| B | Eve | 88 |
+
+---
+
+## Q4 - Employees above team average
+
+```python
+avg_scores = df.groupby("team")["score"].transform("mean")
+df[df["score"] > avg_scores][["team", "employee", "score"]]
+```
+
+**Result:**
+
+| team | employee | score |
+|------|----------|-------|
+| A | Alice | 90 |
+| A | Dave | 95 |
+| B | Eve | 88 |
+
