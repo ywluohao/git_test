@@ -1,22 +1,22 @@
-OR_Filter =
+OR_Filter = 
 IF (
     (
         ISFILTERED('T1_Unit_head'[emp_nm]) &&
-        OAT_CUST_BASE2[emp_nm] IN VALUES('T1_Unit_head'[emp_nm]) &&
+        SELECTEDVALUE(OAT_CUST_BASE2[emp_nm]) IN VALUES('T1_Unit_head'[emp_nm]) &&
         ISFILTERED('T1_PM_Name'[PM_NAME]) &&
-        OAT_CUST_BASE2[PM_NAME] IN VALUES('T1_PM_Name'[PM_NAME])
+        SELECTEDVALUE(OAT_CUST_BASE2[PM_NAME]) IN VALUES('T1_PM_Name'[PM_NAME])
     )
     ||
     (
         ISFILTERED('T1_Unit_name'[LVL3_RPT_BOD_NM]) &&
-        OAT_CUST_BASE2[LVL3_RPT_BOD_NM] IN VALUES('T1_Unit_name'[LVL3_RPT_BOD_NM]) &&
-        OAT_CUST_BASE2[pb_counter] = 1
+        SELECTEDVALUE(OAT_CUST_BASE2[LVL3_RPT_BOD_NM]) IN VALUES('T1_Unit_name'[LVL3_RPT_BOD_NM]) &&
+        SELECTEDVALUE(OAT_CUST_BASE2[pb_counter]) = 1
     )
     ||
     (
         ISFILTERED('T1_RESP_Node'[RESP_CODE]) &&
-        OAT_CUST_BASE2[RESP_CODE] IN VALUES('T1_RESP_Node'[RESP_CODE]) &&
-        OAT_CUST_BASE2[pb_counter] = 1
+        SELECTEDVALUE(OAT_CUST_BASE2[RESP_CODE]) IN VALUES('T1_RESP_Node'[RESP_CODE]) &&
+        SELECTEDVALUE(OAT_CUST_BASE2[pb_counter]) = 1
     ),
     1,
     0
