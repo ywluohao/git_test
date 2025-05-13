@@ -1,0 +1,34 @@
+OR_Filter = 
+VAR EmpMatch =
+    NOT ISEMPTY(
+        INTERSECT(
+            VALUES(OAT_CUST_BASE2[emp_nm]),
+            VALUES('T1_Unit_head'[emp_nm])
+        )
+    ) &&
+    NOT ISEMPTY(
+        INTERSECT(
+            VALUES(OAT_CUST_BASE2[PM_NAME]),
+            VALUES('T1_PM_Name'[PM_NAME])
+        )
+    )
+
+VAR BODMatch =
+    NOT ISEMPTY(
+        INTERSECT(
+            VALUES(OAT_CUST_BASE2[LVL3_RPT_BOD_NM]),
+            VALUES('T1_Unit_name'[LVL3_RPT_BOD_NM])
+        )
+    ) &&
+    MAX(OAT_CUST_BASE2[pb_counter]) = 1
+
+VAR RespMatch =
+    NOT ISEMPTY(
+        INTERSECT(
+            VALUES(OAT_CUST_BASE2[RESP_CODE]),
+            VALUES('T1_RESP_Node'[RESP_CODE])
+        )
+    ) &&
+    MAX(OAT_CUST_BASE2[pb_counter]) = 1
+
+RETURN IF(EmpMatch || BODMatch || RespMatch, 1, 0)
