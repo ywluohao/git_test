@@ -17,3 +17,27 @@ VAR SystemMatch =
 
 RETURN
 IF(ManagerMatch || SystemMatch, 1, 0)
+
+
+
+OR_Filter =
+VAR SelectedManagers = VALUES('access filter_graph'[Head Manager])
+VAR SelectedSystems = VALUES('access filter.GetSystem'[AA_cert_SYSTEM])
+
+VAR ManagerMatch =
+    CALCULATE(
+        COUNTROWS('access filter_graph'),
+        FILTER(
+            'access filter_graph',
+            'access filter_graph'[OrgPath] IN VALUES(managementcts_combined_with_HR_use[OrgPath]) &&
+            'access filter_graph'[Head Manager] IN SelectedManagers
+        )
+    ) > 0
+
+VAR SystemMatch =
+    managementcts_combined_with_HR_use[AA_cert_SYSTEM] IN SelectedSystems
+
+RETURN
+IF(ManagerMatch || SystemMatch, 1, 0)
+
+
