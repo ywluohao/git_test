@@ -41,3 +41,20 @@ RETURN
 IF(ManagerMatch || SystemMatch, 1, 0)
 
 
+OR_Filter =
+VAR SelectedManagers = VALUES('Filter_OrgPath'[Manager])
+VAR SelectedSystems = VALUES('Filter_System'[System])
+
+VAR MatchManager =
+    CALCULATE(
+        COUNTROWS('Filter_OrgPath'),
+        'Filter_OrgPath'[Manager] IN SelectedManagers,
+        'Filter_OrgPath'[OrgPath] = 'Certification'[OrgPath]
+    ) > 0
+
+VAR MatchSystem =
+    'Certification'[System] IN SelectedSystems
+
+RETURN IF(MatchManager || MatchSystem, 1, 0)
+
+
