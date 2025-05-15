@@ -1,0 +1,20 @@
+OR_Filter = 
+VAR SelectedDepts = VALUES(DepartmentTable[Department])
+VAR SelectedJobs = VALUES(JobTitleTable[JobTitle])
+
+VAR MatchDept = 
+    IF (
+        ISFILTERED(DepartmentTable[Department]),
+        CONTAINS(SelectedDepts, [Department], Employees[Department]),
+        FALSE
+    )
+
+VAR MatchJob = 
+    IF (
+        ISFILTERED(JobTitleTable[JobTitle]),
+        CONTAINS(SelectedJobs, [JobTitle], Employees[JobTitle]),
+        FALSE
+    )
+
+RETURN
+IF(MatchDept || MatchJob, 1, 0)
