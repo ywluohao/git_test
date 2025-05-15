@@ -1,0 +1,16 @@
+OR_Filter = 
+VAR SelectedPrimary = VALUES(P[Primary Analyst])
+VAR SelectedSecondary = VALUES(S[Secondary Analyst])
+
+RETURN
+IF (
+    COUNTROWS(
+        FILTER (
+            CAATS_TASKS,
+            (CAATS_TASKS[Primary Analyst] IN SelectedPrimary)
+            || (CAATS_TASKS[Secondary Analyst] IN SelectedSecondary)
+        )
+    ) > 0,
+    1,
+    0
+)
