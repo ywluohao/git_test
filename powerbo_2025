@@ -1,0 +1,19 @@
+OR_Filter =
+VAR SelectedManagers = VALUES(ManagerMap[Manager])
+VAR SelectedSystems = VALUES(OrgTable[System])
+
+VAR ManagerMatch =
+    CALCULATE(
+        COUNTROWS(ManagerMap),
+        FILTER(
+            ManagerMap,
+            ManagerMap[OrgPath] = OrgTable[OrgPath] &&
+            ManagerMap[Manager] IN SelectedManagers
+        )
+    ) > 0
+
+VAR SystemMatch = 
+    OrgTable[System] IN SelectedSystems
+
+RETURN
+IF(ManagerMatch || SystemMatch, 1, 0)
