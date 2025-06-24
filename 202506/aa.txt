@@ -1,0 +1,5 @@
+import tabula
+
+dfs = tabula.read_pdf("your_file.pdf", pages="all", multiple_tables=True, guess=True)
+df_all = pd.concat(dfs).reset_index(drop=True)
+print(df_all.head())
