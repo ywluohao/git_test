@@ -1,71 +1,76 @@
 import re
 import pandas as pd
 
-# --- CONFIG ---
-INPUT_FILE = "your_file.txt"  # change this to your actual file path
+# Input file
+INPUT_FILE = "your_file.txt"
 
-# --- STEP 1: Read and preprocess ---
+# Prepare output
+parsed_rows = []
+current_record = []
+
+# Precompiled regex
+record_start_re = re.compile(r'^\s*\d{4}\s+\d{7}')
+main_line_re = re.compile(
+    r'^\s*(\d{4})\s+(\d{7})\s+@?(\d{2}-[A-Z]{3}-\d{2})\s+(.+?)\s+([A-Z0-9\-]{3,})\s+([\d,]+\.\d{2})\s+(\d{2}-[A-Z]{3}-\d{2})?\s+([\d,]*\.?\d*)?\s+(\w+)'
+)
+
 with open(INPUT_FILE, "r") as f:
-    lines = [line.rstrip() for line in f if line.strip()]
+    for line in f:
+        line = line.rstrip()
+        if not line.strip():
+            continue
 
-records = []
-i = 0
-while i < len(lines):
-    line = lines[i]
+        if record_start_re.match(line):
+            if current_record:
+                # Parse the previous record before starting a new one
+                header = current_record[0]
+                site_full = current_record[-1]
+                payee_overflow = current_record[1] if len(current_record) == 3 else ""
+                
+                m = main_line_re.match(header)
+                if m:
+                    fields = list(m.groups())
+                    if payee_overflow:
+                        fields[3] = fields[3].strip() + " " + payee_overflow.strip()
+                    fields.append(site_full.strip())
+                    parsed_rows.append(fields)
+                else:
+                    print("⚠️ Failed to parse record:", header)
 
-    # Detect start of new record
-    if re.match(r'^\s*\d{4}\s+\d{7}', line):
-        payment_line = line
-        next_line = lines[i + 1] if i + 1 < len(lines) else ""
-
-        # Determine if there's a continuation line with address
-        has_extra_line = (
-            not re.match(r'^\s*\d{4}\s+\d{7}', next_line)
-            and not next_line.startswith("HARRIS SOB")
-            and "BANK" not in next_line
-            and "Payment Register" not in next_line
-        )
-
-        if has_extra_line:
-            site_extra = next_line.strip()
-            i += 1  # Skip next line in loop
+            # Start a new record
+            current_record = [line]
         else:
-            site_extra = ""
+            current_record.append(line)
 
-        records.append((payment_line, site_extra))
-    i += 1
-
-# --- STEP 2: Parse each record ---
-parsed = []
-for payment_line, site_extra in records:
-    match = re.match(
-        r'^\s*(\d{4})\s+(\d{7})\s+@?(\d{2}-[A-Z]{3}-\d{2})\s+(.+?)\s+([A-Z0-9\- ]{3,})\s+([\d,]+\.\d{2})\s+(\d{2}-[A-Z]{3}-\d{2})?\s+([\d,]*\.?\d*)?\s+(\w+)',
-        payment_line
-    )
-    if match:
-        fields = list(match.groups())
-        site_code = fields[4].strip()
-        site_full = site_code + " " + site_extra if site_extra else site_code
-        fields.append(site_full)
-        parsed.append(fields)
+# Don't forget the final record
+if current_record:
+    header = current_record[0]
+    site_full = current_record[-1]
+    payee_overflow = current_record[1] if len(current_record) == 3 else ""
+    
+    m = main_line_re.match(header)
+    if m:
+        fields = list(m.groups())
+        if payee_overflow:
+            fields[3] = fields[3].strip() + " " + payee_overflow.strip()
+        fields.append(site_full.strip())
+        parsed_rows.append(fields)
     else:
-        print("⚠️ Failed to parse:\n", payment_line)
+        print("⚠️ Failed to parse record:", header)
 
-# --- STEP 3: Build dataframe ---
+# Build DataFrame
 columns = [
     "Payment Document", "Sequence Num", "Payment Date", "Payee",
     "Site", "Payment Amount", "Cleared Date", "Cleared Amount", "Status",
     "Site Full"
 ]
 
-df = pd.DataFrame(parsed, columns=columns)
+df = pd.DataFrame(parsed_rows, columns=columns)
 
-# --- STEP 4: Clean up numeric fields ---
+# Clean numeric fields
 df["Payment Amount"] = df["Payment Amount"].str.replace(",", "").astype(float)
 df["Cleared Amount"] = pd.to_numeric(df["Cleared Amount"].str.replace(",", ""), errors="coerce")
 
-# --- STEP 5: Done! ---
+# Done
 print(df.head())
-
-# Optional: save to CSV
-# df.to_csv("parsed_payment_register.csv", index=False)
+# df.to_csv("parsed_register.csv", index=False)
