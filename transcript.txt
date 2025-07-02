@@ -1,0 +1,91 @@
+
+
+**Slide 1: Title Slide**
+**Title:** My Journey: Roots, Routes, and Routines
+**Subtitle:** Hao
+
+**Speaker Notes:*
+
+Hi everyone, I’m Hao. Today I want to share a bit about myself — where I’m from, how I got here, and what I enjoy doing, both at work and after hours.  hopefully a few laughs along the way. 
+
+
+---
+
+**Slide 2: Where I’m From**
+**Title:** Roots & Routes
+
+**Speaker Notes:**
+
+I was born and raised in Yiwu, Zhejiang — which some of you might know as the world’s largest wholesale market, especially for e-commerce.What you might not know is that snow was a rare event growing up; I saw it maybe three times in total.
+
+That changed quickly when I moved to Toronto in 2011. Let’s just say I got a very real introduction to Canadian winters.
+
+Now I live in Port Credit, Mississauga. It’s right by the lake. Seagulls fly overhead, there are walking trails, and a very relaxed vibe. It kind of feels like early retirement — in the best way.
+
+
+---
+
+**Slide 3: School Days**
+**Title:** Numbers, Stats & Stress
+
+**Speaker Notes:**
+
+I’ve always liked numbers. That led me to study Actuarial Science and Statistics for my undergrad.  followed by a  Master’s in Quantitative Finance.
+
+While academics kept me busy, I also made time for sports like squash, tennis, and badminton … until exams benched all of them. My racket skills now mostly apply to swatting away deadline anxiety.
+
+There’s also a well-known video among Waterloo students that perfectly sums up our collective academic experience. Let’s take a quick look.
+
+---
+
+**Slide 4: First Jobs**
+**Title:** Breaking Into the Industry
+
+**Speaker Notes:**
+As part of the co-op program at UWaterloo, I had six internships, primarily in insurance and banking.
+
+Along the way, I learned tools like SQL, VBA, and MATLAB. I liked solving problems and building things that worked. But somewhere between the mortality tables and policy rules, insurance started to feel a little too safe — like every day was just Ctrl+C, Ctrl+V, repeat.
+
+So I switched gears and jumped into finance. That’s where I found my place. Now I’m working at BMO, building cool stuff with data and solving real problems. It keeps me learning, and that’s what I enjoy most.
+
+I actually worked in all four corners of the Bay and King intersection. I tested mainframes at CIBC, helped skip SAS fees at TD by rewriting credit risk models in Python, stress-tested benchmark rates at Scotiabank, and now I’m at BMO.
+
+---
+
+**Slide 5: Free Time = Me Time**
+**Title:** Ctrl + Alt + Me Time
+
+**Speaker Notes:**
+Outside of work, I have a few hobbies that help me recharge.
+
+Back in university, I loved binge-watching dramas — most of the time with my roommates. One minute we were planning to study, the next we were six episodes deep with snacks and no regrets.
+
+I also read serialized fiction — the kind that drops a new chapter every day. It’s like a daily snack for my brain. You know it’s bad when I refresh the app like it owes me money.
+
+I used to be a big Bayern Munich fan — thanks to my German roommate. Let’s just say he didn’t ask, he converted me. Now I mostly just yell at the TV and pretend I know more than the coach.
+
+I still play tennis, mostly doubles. Singles is too much running. If I wanted that kind of cardio, I would play Ring Fit Adventure .
+
+---
+
+**Slide 6: Tech Obsession**
+**Title:** Tinkering With Tech
+
+**Speaker Notes:**
+I’m also big into home automation. I like building systems that make my life smoother — or at least slightly cooler.
+
+For example, Every day, my lights turn on about an hour before sunset — no guessing, just a little automation that makes things feel cozy.
+
+At night, I use Alexa to help me wind down. The lights go off, soft music plays for about 30 minutes, then everything goes quiet and my brain flips into Do Not Disturb mode, so I can sleep without interruptions.
+
+I built a script that scrapes tennis scores every 5 minutes and only texts me when my fave is ahead. No updates if they’re losing. If it stays quiet too long… I block the sport for a while and pretend it never happened.
+
+I also use AI tools in my work. They help a lot, but when it comes to debugging, I still trust myself more. Most days.
+
+---
+
+**Slide 7: Thanks!**
+**Title:** Thanks for Listening!
+
+**Speaker Notes:**
+So that’s a bit about me. Thanks for listening. 
