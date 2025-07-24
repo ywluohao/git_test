@@ -1,0 +1,7 @@
+# Exports the system-level PATH
+[Environment]::GetEnvironmentVariable('Path','Machine') \
+  > D:\Backups\node_upgrade_backup\path_machine.txt
+
+# Exports the user-level PATH
+[Environment]::GetEnvironmentVariable('Path','User') \
+  > D:\Backups\node_upgrade_backup\path_user.txt
