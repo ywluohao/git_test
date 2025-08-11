@@ -1,0 +1,8 @@
+const bad = [];
+for (const [r,row] of filteredJSON.entries()) {
+  for (const k in row) {
+    const v = row[k];
+    if (typeof v === 'string' && /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(v)) bad.push({r,k});
+  }
+}
+console.table(bad);
