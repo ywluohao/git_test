@@ -1,0 +1,28 @@
+async downloadModule(filteredJSON, sheetname, filename) {
+  console.log('enter downloadModule', {rows: filteredJSON?.length, sheetname, filename});
+  try {
+    // validate inputs
+    if (!Array.isArray(filteredJSON)) throw new Error('filteredJSON not array');
+    if (!filename) throw new Error('missing filename');
+
+    // detect illegal control chars
+    const bad = [];
+    for (const [i,row] of filteredJSON.entries()) {
+      for (const k in row) {
+        const v = row[k];
+        if (typeof v === 'string' && /[\u0000-\u0008\u000B\u000C\u000E-\u001F]/.test(v)) bad.push([i,k]);
+      }
+    }
+    if (bad.length) console.warn('bad chars at', bad.slice(0,20));
+
+    const ws = XLSX.utils.json_to_sheet(filteredJSON);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, sheetname || 'Sheet1');
+
+    await XLSX.writeFile(wb, filename + '.xlsx');  // likely throw site
+    console.log('writeFile done');
+  } catch (err) {
+    console.error('downloadModule failed', err);
+    debugger; // step here
+  }
+}
