@@ -1,0 +1,1 @@
+rows: filteredJSON ? filteredJSON.length : undefined,
