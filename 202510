@@ -1,0 +1,10 @@
+Show Row? :=
+VAR sel = VALUES ( SlicerKeys[Key] )
+RETURN
+IF (
+    NOT ISFILTERED ( SlicerKeys[Key] )
+        || CALCULATE ( COUNTROWS ( Main ), TREATAS ( sel, Main[c1] ) ) > 0
+        || CALCULATE ( COUNTROWS ( Main ), TREATAS ( sel, Main[c2] ) ) > 0,
+    1,
+    0
+)
