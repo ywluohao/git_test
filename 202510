@@ -22,3 +22,16 @@ IF (
 )
 
 
+
+FilterFlag :=
+VAR Sel = VALUES ( SlicerKeys[Key] )              -- selected keys in slicer
+VAR K1  = SELECTEDVALUE ( Main[c1] )
+VAR K2  = SELECTEDVALUE ( Main[c2] )
+VAR MatchThisRow =
+    ( NOT ISBLANK(K1) && CONTAINSROW ( Sel, K1 ) )
+    || ( NOT ISBLANK(K2) && CONTAINSROW ( Sel, K2 ) )
+RETURN
+IF ( NOT ISFILTERED ( SlicerKeys[Key] ) || MatchThisRow, 1, 0 )
+
+
+
