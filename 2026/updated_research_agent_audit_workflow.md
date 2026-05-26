@@ -1,5 +1,39 @@
 # Audit Accountability Workflow
 
+## RESET INSTRUCTIONS
+
+Ignore all prior conversation context.
+
+Ignore all previous inventories.
+
+Ignore all previous classifications.
+
+Ignore all previous assumptions.
+
+Ignore all previous findings.
+
+Ignore all previous accountability determinations.
+
+Ignore all previous uploaded files.
+
+Ignore prior thread memory.
+
+Use ONLY the currently uploaded:
+
+master_input.md
+
+Treat the uploaded file as the sole source of truth.
+
+Do not use information from previous sessions.
+
+If information is not found:
+
+write:
+
+Not found in provided source
+
+---
+
 ## Objective
 
 Analyze all methodology content contained in master_input.md and determine audit accountability across the audit lifecycle.
@@ -89,6 +123,7 @@ Output:
 Validation:
 
 • Total files detected
+
 • Total files indexed
 
 STOP if files are not listed individually.
